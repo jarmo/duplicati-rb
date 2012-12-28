@@ -28,6 +28,13 @@ Duplicati.backup(
 )
 ````
 
+Refer to [Duplicati documentation](http://duplicati.com/howtos) for different backup store locations.
+
+## Limitations
+
+* Currently only backup is supported. Use command line or GUI utility directly for restoring.
+* You need to start Ruby with administrative privileges under Windows to backup files in use.
+
 ## Contributing
 
 1. Fork it
