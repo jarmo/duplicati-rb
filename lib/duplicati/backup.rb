@@ -5,7 +5,7 @@ class Duplicati
     end
 
     def command
-      %Q["#{@opts[:duplicati_path]}" backup "#{@opts[:backup_paths].join(File::PATH_SEPARATOR)}" "#{@opts[:backup_store_path]}"
+      %Q["#{@opts[:duplicati_path]}" backup "#{(@opts[:backup_paths] || []).join(File::PATH_SEPARATOR)}" "#{@opts[:backup_store_path]}"
              --passphrase="#{@opts[:backup_encryption_key]}"
              --auto-cleanup                        
              --full-if-older-than=1M

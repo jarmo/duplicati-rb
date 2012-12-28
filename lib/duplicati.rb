@@ -10,6 +10,8 @@ class Duplicati
     end
   end
 
+  attr_reader :opts
+
   def initialize(opts={})
     opts[:log_path] ||= "duplicati.log"
     opts[:duplicati_path] = duplicati_path(opts[:duplicati_path])
@@ -23,12 +25,12 @@ class Duplicati
     ).command
   end
 
+  private
+
   def duplicati_path(path_from_options)
     path = path_from_options || ENV["DUPLICATI_PATH"] || "/Program Files/Duplicati"
-    File.join(File.exists?(path) ? path : "", "Duplicati.CommandLine")
+    File.join(path, "Duplicati.CommandLine")
   end
-
-  private
 
   def execute(command)
     old_log_file_size = File.read(@opts[:log_path]).strip.size rescue 0
