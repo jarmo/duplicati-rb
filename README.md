@@ -1,6 +1,6 @@
 # Duplicati
 
-TODO: Write a gem description
+This gem is a [Duplicati](http://duplicati.com) backup utility wrapper in Ruby with easier API and sensible configuration defaults.
 
 ## Installation
 
@@ -18,7 +18,15 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+````
+require "duplicati"
+
+Duplicati.backup(
+  :backup_paths => ["/foo/bar", "/foo/baz"],
+  :backup_store_path => "file:///backup",
+  :backup_encryption_key => "very-secret-key"
+)
+````
 
 ## Contributing
 
