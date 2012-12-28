@@ -1,6 +1,6 @@
 # Duplicati
 
-This gem is a [Duplicati](http://duplicati.com) backup utility wrapper in Ruby with easier API and sensible configuration defaults.
+This gem is a [Duplicati](http://duplicati.com) backup utility wrapper written in Ruby with easier API and sensible configuration defaults compared to Duplicati's own utilities.
 
 ## Installation
 
