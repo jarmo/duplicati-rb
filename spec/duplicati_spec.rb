@@ -77,4 +77,64 @@ describe Duplicati do
       Duplicati.backup
     end
   end
+
+  context "#execute" do
+
+    before do
+      Duplicati.any_instance.stub(:notify)
+    end
+
+    it "executes the command" do
+      cmd = "multiline
+        command     with  spaces"
+      Object.any_instance.should_receive(:system).with("multiline command with spaces")
+
+      Duplicati.new(:log_path => "foo").send(:execute, cmd)
+    end
+
+    context "#execution_success" do
+      it "is false when command itself fails" do
+        Object.any_instance.should_receive(:system).and_return false
+
+        duplicati = Duplicati.new
+        duplicati.send(:execute, "")
+        duplicati.execution_success.should be_false 
+      end
+
+      it "is false when command succeeds and log file size does not increase" do
+        Object.any_instance.should_receive(:system).and_return true
+        File.should_receive(:read).with("foo").and_return "", ""
+
+        duplicati = Duplicati.new :log_path => "foo"
+        duplicati.send(:execute, "")
+        duplicati.execution_success.should be_false 
+      end
+
+      it "is true when command succeeds and log file size increases" do
+        Object.any_instance.should_receive(:system).and_return true
+        File.should_receive(:read).with("foo").and_return "", "output"
+
+        duplicati = Duplicati.new :log_path => "foo"
+        duplicati.send(:execute, "")
+        duplicati.execution_success.should be_true
+      end
+    end
+
+    context "#notify" do
+      before do
+        Duplicati.any_instance.unstub(:notify)
+      end
+
+      it "notifies with all possible notifications" do
+        Object.any_instance.stub(:system).and_return false
+        notification1 = double('notification1').as_null_object
+        notification2 = double('notification2').as_null_object
+        
+        notification1.should_receive(:notify).with(false)
+        notification2.should_receive(:notify).with(false)
+        Duplicati.new(:notifications => [notification1, notification2]).send(:execute, "")
+      end
+    end
+
+  end
 end
