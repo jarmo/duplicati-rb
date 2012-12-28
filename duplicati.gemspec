@@ -8,9 +8,9 @@ Gem::Specification.new do |gem|
   gem.version       = Duplicati::VERSION
   gem.authors       = ["Jarmo Pertman"]
   gem.email         = ["jarmo.p@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{Duplicati backup utility wrapper in Ruby with easier API and sensible configuration defaults.}
+  gem.summary       = %q{Duplicati backup utility wrapper in Ruby with easier API and sensible configuration defaults.}
+  gem.homepage      = "https://github.com/jarmo/duplicati-rb"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
