@@ -1,4 +1,5 @@
 # Duplicati
+[![Build Status](https://secure.travis-ci.org/jarmo/duplicati-rb.png)](http://travis-ci.org/jarmo/duplicati-rb)
 
 This gem is a [Duplicati](http://duplicati.com) backup utility wrapper written in Ruby with easier API and sensible configuration defaults compared to Duplicati's own utilities.
 
