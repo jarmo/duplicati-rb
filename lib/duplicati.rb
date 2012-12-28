@@ -34,6 +34,7 @@ class Duplicati
     old_log_file_size = File.read(@opts[:log_path]).strip.size rescue 0
     @execution_success = system(format command) && File.read(@opts[:log_path]).strip.size > old_log_file_size
     notify
+    exit @execution_success ? 0 : 1
   end
 
   def options(*options_to_extract)
