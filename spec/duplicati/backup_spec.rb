@@ -88,6 +88,16 @@ describe Duplicati::Backup do
       command_parts[8].should == "--exclude-regexp=\"d\""
     end
 
+    it "works also with regular inclusion and exclusion filters" do
+      command_parts = Duplicati::Backup.new(:backup_paths => [], :backup_store_path => "", :inclusion_filters => ["a", /b/], :exclusion_filters => [/c/, "d"]).
+        command.split(" ")
+
+      command_parts[5].should == "--include=\"a\""
+      command_parts[6].should == "--include-regexp=\"b\""
+      command_parts[7].should == "--exclude-regexp=\"c\""
+      command_parts[8].should == "--exclude=\"d\""
+    end
+
     it "does not include filters into command when they're not specified" do
       command = Duplicati::Backup.new(:backup_paths => [], :backup_store_path => "").command
       command.should_not include("--include-regexp")

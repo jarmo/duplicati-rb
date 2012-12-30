@@ -52,7 +52,13 @@ class Duplicati
 
     def filters(type, filters)
       filters.reduce([]) do |memo, filter|
-        memo << %Q[--#{type}-regexp="#{filter.source}"]
+        flag = "--#{type}"
+        if filter.is_a?(Regexp)
+          flag += %Q[-regexp="#{filter.source}"]
+        else
+          flag += %Q[="#{filter}"]
+        end
+        memo << flag
       end.join(" ")
     end
   end
