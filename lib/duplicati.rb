@@ -46,6 +46,7 @@ class Duplicati
     puts formatted_command if $DEBUG
     @execution_success = system(formatted_command) && File.read(@opts[:log_path]).strip.size > old_log_file_size
     notify
+    @execution_success
   end
 
   def options(*options_to_extract)
