@@ -33,7 +33,8 @@ class Duplicati
 
     def backup_paths
       @backup_paths.map do |path|
-        Dir.glob(path.strip.gsub(File::ALT_SEPARATOR, File::SEPARATOR).gsub(/\/$/, ""))
+        path = path.strip.gsub(File::ALT_SEPARATOR, File::SEPARATOR) if File::ALT_SEPARATOR
+        Dir.glob(path.gsub(/\/$/, ""))
       end.flatten.join(File::PATH_SEPARATOR)
     end
   end
