@@ -29,7 +29,9 @@ describe Duplicati do
     end
 
     it "has default notifications" do
-      Duplicati.new.opts[:notifications].should == [Duplicati::Notification::Growl]
+      notifications = Duplicati.new.opts[:notifications]
+      notifications.size.should == 1
+      notifications.first.should be_kind_of(Duplicati::Notification::Growl)
     end
 
     it "allows to specify notifications" do

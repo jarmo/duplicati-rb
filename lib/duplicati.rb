@@ -15,7 +15,7 @@ class Duplicati
   def initialize(opts={})
     opts[:log_path] ||= "duplicati.log"
     opts[:duplicati_path] = duplicati_path(opts[:duplicati_path])
-    opts[:notifications] ||= [Notification::Growl]
+    opts[:notifications] ||= [Notification::Growl.new]
     opts[:inclusion_filters] ||= [opts[:inclusion_filter]].compact
     opts[:exclusion_filters] ||= [opts[:exclusion_filter]].compact
 

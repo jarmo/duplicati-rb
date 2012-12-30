@@ -8,7 +8,7 @@ describe Duplicati::Notification::Growl do
     GNTP = double('gntp').as_null_object unless defined?(GNTP) && GNTP.null_object?
   end
 
-  let(:growl) { subject.class }
+  let(:growl) { subject }
 
   it "notifies with success message" do
     GNTP.should_receive(:notify).with notification_args("Backup successfully finished!", "success.png")
