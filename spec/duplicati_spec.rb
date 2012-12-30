@@ -45,7 +45,7 @@ describe Duplicati do
   context "#backup" do
     it "executes the backup command" do
       Duplicati::Backup.any_instance.should_receive(:command).and_return("backup command")
-      duplicati = Duplicati.new
+      duplicati = Duplicati.new(:backup_paths => [], :backup_store_path => "")
       duplicati.should_receive(:execute).with("backup command")
 
       duplicati.backup
@@ -74,7 +74,7 @@ describe Duplicati do
       Duplicati::Backup.any_instance.should_receive(:command).and_return("backup command")
       Duplicati.any_instance.should_receive(:execute).with("backup command")
 
-      Duplicati.backup
+      Duplicati.backup(:backup_paths => [], :backup_store_path => "")
     end
   end
 
