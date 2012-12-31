@@ -21,7 +21,7 @@ describe Duplicati::Notification::Growl do
   end
 
   it "does not blow up when ruby_gntp gem is not installed" do
-    Object.any_instance.unstub(:require)
+    Object.any_instance.stub(:require).with("ruby_gntp") { raise LoadError }
     GNTP.should_not_receive(:notify)
 
     expect {
