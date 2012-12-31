@@ -6,6 +6,9 @@ This gem is a [Duplicati](http://duplicati.com) backup utility wrapper written i
 
 ## Installation
 
+1. Install [Duplicati](http://duplicati.com) itself.
+2. Install Duplicati gem.
+
 Add this line to your application's Gemfile:
 
     gem 'duplicati'
@@ -20,7 +23,7 @@ Or install it yourself as:
 
 ## Usage
 
-````
+````ruby
 require "duplicati"
 
 Duplicati.backup(
@@ -32,9 +35,83 @@ Duplicati.backup(
 
 Refer to [Duplicati documentation](http://duplicati.com/howtos) for different backup store locations.
 
+## Notifications
+
+Duplicati gem supports currently two different notifications.
+
+### Growl
+
+Growl notifications are enabled by default if not specified otherwise.
+
+For these to work you need to install [Growl](http://growl.info/) or [Growl for Windows](http://www.growlforwindows.com) and
+a [ruby_gntp](https://github.com/snaka/ruby_gntp) gem.
+
+You can enable Growl notifications manually by specifying ````:notifications```` option like this:
+
+````ruby
+Duplicati.backup(
+  :notifications => [Duplicati::Notification::Growl.new],
+  # other options
+)
+````
+
+### E-mail
+
+To use e-mail notifications, you need to install [mail](https://github.com/mikel/mail) gem.
+
+After that you need to specify ````:notifications```` option like this:
+
+````ruby
+Duplicati.backup(
+  :notifications => [
+    Duplicati::Notification::Mail.new(
+      :to => "recipient@example.com",
+      :smtp_config => { :domain => "example.com", :address => "mail.example.com" }
+    )
+  ],
+  # other options
+)
+````
+
+
+### Multiple notifications
+
+You can use multiple notifications together by specifying them in the ````:notifications```` option array:
+
+````ruby
+Duplicati.backup(:notifications => [NotificationClass1.new, NotificationClass2.new, ...])
+````
+
+### Disabling notifications
+
+To disable all notifications, you need to pass an empty array to ````:notifications```` option:
+
+````ruby
+Duplicati.backup(:notifications => [])
+````
+
+### Others
+
+It is really easy to add new notification types by just implementing one class with single method called ````#notify````.
+
+This method takes a single boolean argument called ````success```` which will be true if the Duplicati command succeeded
+and false otherwise. For example:
+
+````ruby
+class CustomNotification
+  def notify(success)
+    if success
+      # notify with success message
+    else
+      # notify with failure message
+    end
+  end
+end
+````
+
 ## Limitations
 
-* Currently only backup is supported. Use command line or GUI utility directly for restoring.
+* Currently only backup is supported. Use Duplicati's command line or GUI utility directly for restoring.
 * You need to start Ruby with administrative privileges under Windows to backup files in use.
 
 ## Contributing
