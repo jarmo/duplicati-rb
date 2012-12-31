@@ -35,6 +35,33 @@ Duplicati.backup(
 
 Refer to [Duplicati documentation](http://duplicati.com/howtos) for different backup store locations.
 
+## Filters
+
+Duplicati allows to specify inclusion and exclusion filters when it comes to backups, restoring and so on.
+
+It has [quite complex filtering API](https://code.google.com/p/duplicati/wiki/FilterUsage), which this gem tries to simplify.
+
+To include only .txt files, you need to write this:
+
+````ruby
+Duplicati.backup(:inclusion_filter => /.*\.txt$/)
+````
+
+Globs are also supported:
+````ruby
+Duplicati.backup(:inclusion_filter => "*.mp3")
+````
+
+It is also possible to have multiple filters:
+````ruby
+Duplicati.backup(:inclusion_filters => [/.*\.txt$/, "*.mp3"])
+````
+
+Exclusion filters work similarly:
+````ruby
+Duplicati.backup(:exclusion_filter => "*.exe")
+````
+
 ## Notifications
 
 Duplicati gem supports currently two different notifications.
