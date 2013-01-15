@@ -34,6 +34,7 @@ describe Duplicati::Backup do
              --passphrase="secret"
              --include-regexp="include-me"
              --exclude-regexp="exclude-me"
+             --volsize=100mb
              --auto-cleanup                        
              --full-if-older-than=1M
              --usn-policy=on

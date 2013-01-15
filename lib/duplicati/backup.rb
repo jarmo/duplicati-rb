@@ -15,6 +15,7 @@ class Duplicati
              #{encryption_option}
              #{inclusion_filters}
              #{exclusion_filters}
+             --volsize=100mb
              --auto-cleanup                        
              --full-if-older-than=1M
              --usn-policy=on
