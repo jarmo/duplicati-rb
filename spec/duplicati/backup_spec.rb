@@ -37,8 +37,8 @@ describe Duplicati::Backup do
              --volsize=100mb
              --auto-cleanup                        
              --full-if-older-than=1M
-             --usn-policy=on
-             --snapshot-policy=on
+             --usn-policy=auto
+             --snapshot-policy=auto
              --full-if-sourcefolder-changed
              2>&1 1>> "/zzz/output.log" &&
 
