@@ -1,4 +1,5 @@
 # Duplicati
+[![Gem Version](https://badge.fury.io/rb/duplicati.png)](http://badge.fury.io/rb/duplicati)
 [![Build Status](https://secure.travis-ci.org/jarmo/duplicati-rb.png)](http://travis-ci.org/jarmo/duplicati-rb)
 [![Coverage](https://coveralls.io/repos/jarmo/duplicati-rb/badge.png?branch=master)](https://coveralls.io/r/jarmo/duplicati-rb)
 
