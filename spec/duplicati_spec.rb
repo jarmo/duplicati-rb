@@ -124,31 +124,50 @@ describe Duplicati do
       Duplicati.new(:log_path => "foo").send(:execute, cmd)
     end
 
-    context "#execution_success" do
-      it "is false when command itself fails" do
+    context "#execution_success?" do
+      it "is false when command fails with negative exit status" do
         Object.any_instance.should_receive(:system).and_return false
+        $?.should_receive(:exitstatus).and_return -1
 
         duplicati = Duplicati.new
-        duplicati.send(:execute, "")
-        duplicati.execution_success.should be_false 
+        duplicati.send(:execute, "").should be_false
+        duplicati.should_not be_execution_success
       end
 
-      it "is false when command succeeds and log file size does not increase" do
-        Object.any_instance.should_receive(:system).and_return true
-        File.should_receive(:read).with("foo").and_return "", ""
+      it "is false when command fails with exit status above 2" do
+        Object.any_instance.should_receive(:system).and_return false
+        $?.should_receive(:exitstatus).and_return 3
 
-        duplicati = Duplicati.new :log_path => "foo"
-        duplicati.send(:execute, "")
-        duplicati.execution_success.should be_false 
+        duplicati = Duplicati.new
+        duplicati.send(:execute, "").should be_false
+        duplicati.should_not be_execution_success
       end
 
-      it "is true when command succeeds and log file size increases" do
+      it "is true when command succeeds with exit status 0" do
         Object.any_instance.should_receive(:system).and_return true
-        File.should_receive(:read).with("foo").and_return "", "output"
+        $?.should_receive(:exitstatus).and_return 0
 
-        duplicati = Duplicati.new :log_path => "foo"
-        duplicati.send(:execute, "")
-        duplicati.execution_success.should be_true
+        duplicati = Duplicati.new
+        duplicati.send(:execute, "").should be_true
+        duplicati.should be_execution_success
+      end
+
+      it "is true when command succeeds with exit status 1" do
+        Object.any_instance.should_receive(:system).and_return true
+        $?.should_receive(:exitstatus).and_return 1
+
+        duplicati = Duplicati.new
+        duplicati.send(:execute, "").should be_true
+        duplicati.should be_execution_success
+      end
+
+      it "is true when command succeeds with exit status 2" do
+        Object.any_instance.should_receive(:system).and_return true
+        $?.should_receive(:exitstatus).and_return 2
+
+        duplicati = Duplicati.new
+        duplicati.send(:execute, "").should be_true
+        duplicati.should be_execution_success
       end
     end
 
@@ -157,13 +176,25 @@ describe Duplicati do
         Duplicati.any_instance.unstub(:notify)
       end
 
-      it "notifies with all possible notifications" do
+      it "notifies with all possible notifications with false execution success" do
         Object.any_instance.stub(:system).and_return false
+        $?.should_receive(:exitstatus).and_return 3
         notification1 = double('notification1').as_null_object
         notification2 = double('notification2').as_null_object
         
         notification1.should_receive(:notify).with(false)
         notification2.should_receive(:notify).with(false)
+        Duplicati.new(:notifications => [notification1, notification2]).send(:execute, "")
+      end
+
+      it "notifies with all possible notifications with true execution success" do
+        Object.any_instance.stub(:system).and_return true
+        $?.should_receive(:exitstatus).and_return 0
+        notification1 = double('notification1').as_null_object
+        notification2 = double('notification2').as_null_object
+        
+        notification1.should_receive(:notify).with(true)
+        notification2.should_receive(:notify).with(true)
         Duplicati.new(:notifications => [notification1, notification2]).send(:execute, "")
       end
     end

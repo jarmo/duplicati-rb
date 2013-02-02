@@ -12,7 +12,7 @@ class Duplicati
     end
   end
 
-  attr_reader :opts, :execution_success
+  attr_reader :opts
 
   def initialize(opts={})
     opts[:log_path] ||= "duplicati.log"
@@ -31,7 +31,7 @@ class Duplicati
   def backup
     execute Backup.new(
       options :duplicati_path, :backup_paths, :backup_store_path,
-        :backup_encryption_key, :inclusion_filters, :exclusion_filters, :log_path
+      :backup_encryption_key, :inclusion_filters, :exclusion_filters, :log_path
     ).command
   end
 
@@ -43,12 +43,12 @@ class Duplicati
   end
 
   def execute(command)
-    old_log_file_size = File.read(@opts[:log_path]).strip.size rescue 0
     formatted_command = format command
     puts formatted_command if $DEBUG
-    @execution_success = system(formatted_command) && File.read(@opts[:log_path]).strip.size > old_log_file_size
+    system(formatted_command)
+    @exit_status = $?.exitstatus
     notify
-    @execution_success
+    execution_success?
   end
 
   def options(*options_to_extract)
@@ -64,8 +64,19 @@ class Duplicati
 
   def notify
     @opts[:notifications].each do |notification|
-      notification.notify @execution_success
+      notification.notify execution_success?
     end
+  end
+
+  # https://code.google.com/p/duplicati/issues/detail?id=678
+  # 0 - Success
+  # 1 - Success (but no changed files)
+  # 2 - Completed by retried some files, or some files were locked (warnings)
+  # 50 - Some files were uploaded, then connection died
+  # 100 - No connection to server -> Fatal error
+  # 200 - Invalid command/arguments
+  def execution_success?
+    @exit_status && @exit_status.between?(0, 2)
   end
 
 end
