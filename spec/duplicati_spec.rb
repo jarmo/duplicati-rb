@@ -121,7 +121,7 @@ describe Duplicati do
         command     with  spaces"
       Object.any_instance.should_receive(:system).with("multiline command with spaces")
 
-      Duplicati.new(:log_path => "foo").send(:execute, cmd)
+      Duplicati.new.send(:execute, cmd)
     end
 
     context "#execution_success?" do
