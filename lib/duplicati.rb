@@ -41,7 +41,7 @@ class Duplicati
 
   def clean
     execute Clean.new(
-      options :duplicati_path, :backup_store_path, :log_path
+      options :duplicati_path, :backup_store_path, :backup_encryption_key, :log_path
     ).command
 
     self
@@ -53,6 +53,17 @@ class Duplicati
     end
 
     self
+  end
+
+  # https://code.google.com/p/duplicati/issues/detail?id=678
+  # 0 - Success
+  # 1 - Success (but no changed files)
+  # 2 - Completed by retried some files, or some files were locked (warnings)
+  # 50 - Some files were uploaded, then connection died
+  # 100 - No connection to server -> Fatal error
+  # 200 - Invalid command/arguments
+  def execution_success?
+    @execution_success &&= @exit_status && @exit_status.between?(0, 2)
   end
 
   private
@@ -78,17 +89,6 @@ class Duplicati
 
   def format(command)
     command.gsub($/, "").squeeze(" ")
-  end
-
-  # https://code.google.com/p/duplicati/issues/detail?id=678
-  # 0 - Success
-  # 1 - Success (but no changed files)
-  # 2 - Completed by retried some files, or some files were locked (warnings)
-  # 50 - Some files were uploaded, then connection died
-  # 100 - No connection to server -> Fatal error
-  # 200 - Invalid command/arguments
-  def execution_success?
-    @execution_success &&= @exit_status && @exit_status.between?(0, 2)
   end
 
 end

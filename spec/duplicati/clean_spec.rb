@@ -18,6 +18,19 @@ describe Duplicati::Clean do
         :backup_store_path => "file:///foo/backup",
         :log_path => "/zzz/output.log"
       ).command.should == %Q["/bin/duplicati-commandline" delete-all-but-n 5 "file:///foo/backup"
+             
+             --force
+             2>&1 1>> "/zzz/output.log"]
+    end
+
+    it "generates clean command for Duplicati using backup encryption" do
+      Duplicati::Clean.new(
+        :duplicati_path => "/bin/duplicati-commandline",
+        :backup_store_path => "file:///foo/backup",
+        :backup_encryption_key => "foobar",
+        :log_path => "/zzz/output.log"
+      ).command.should == %Q["/bin/duplicati-commandline" delete-all-but-n 5 "file:///foo/backup"
+             --passphrase="foobar"
              --force
              2>&1 1>> "/zzz/output.log"]
     end
