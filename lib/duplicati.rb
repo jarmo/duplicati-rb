@@ -1,5 +1,6 @@
 require File.expand_path("duplicati/version", File.dirname(__FILE__))
 require File.expand_path("duplicati/backup", File.dirname(__FILE__))
+require File.expand_path("duplicati/clean", File.dirname(__FILE__))
 require File.expand_path("duplicati/notification/base", File.dirname(__FILE__))
 require File.expand_path("duplicati/notification/growl", File.dirname(__FILE__))
 require File.expand_path("duplicati/notification/mail", File.dirname(__FILE__))
@@ -8,7 +9,7 @@ class Duplicati
 
   class << self
     def backup(opts={})
-      new(opts).backup
+      new(opts).backup.clean.notify
     end
   end
 
@@ -26,6 +27,7 @@ class Duplicati
     end
 
     @opts = opts
+    @execution_success = true
   end
 
   def backup
@@ -33,6 +35,24 @@ class Duplicati
       options :duplicati_path, :backup_paths, :backup_store_path,
       :backup_encryption_key, :inclusion_filters, :exclusion_filters, :log_path
     ).command
+
+    self
+  end
+
+  def clean
+    execute Clean.new(
+      options :duplicati_path, :backup_store_path, :log_path
+    ).command
+
+    self
+  end
+
+  def notify
+    @opts[:notifications].each do |notification|
+      notification.notify execution_success?
+    end
+
+    self
   end
 
   private
@@ -47,8 +67,6 @@ class Duplicati
     puts formatted_command if $DEBUG
     system(formatted_command)
     @exit_status = $?.exitstatus
-    notify
-    execution_success?
   end
 
   def options(*options_to_extract)
@@ -62,12 +80,6 @@ class Duplicati
     command.gsub($/, "").squeeze(" ")
   end
 
-  def notify
-    @opts[:notifications].each do |notification|
-      notification.notify execution_success?
-    end
-  end
-
   # https://code.google.com/p/duplicati/issues/detail?id=678
   # 0 - Success
   # 1 - Success (but no changed files)
@@ -76,7 +88,7 @@ class Duplicati
   # 100 - No connection to server -> Fatal error
   # 200 - Invalid command/arguments
   def execution_success?
-    @exit_status && @exit_status.between?(0, 2)
+    @execution_success &&= @exit_status && @exit_status.between?(0, 2)
   end
 
 end

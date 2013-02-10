@@ -136,6 +136,25 @@ class CustomNotification
 end
 ````
 
+## Execution status
+
+Duplicati has a ````#execution_success?```` method for determining the success
+status of backup command:
+
+````ruby
+Duplicati.backup(options).execution_success? # => "true" when execution was a success.
+````
+
+## Fine Grained Commands Execution
+
+It is possible to execute commands separately when needed:
+
+````ruby
+Duplicati.backup(options).execution_success?
+# is same as
+Duplicati.new(options).backup.clean.notify.execution_success?
+````
+
 ## Limitations
 
 * Currently only backup is supported. Use Duplicati's command line or GUI utility directly for restoring.

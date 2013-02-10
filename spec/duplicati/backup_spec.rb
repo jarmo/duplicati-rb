@@ -40,10 +40,6 @@ describe Duplicati::Backup do
              --usn-policy=auto
              --snapshot-policy=auto
              --full-if-sourcefolder-changed
-             2>&1 1>> "/zzz/output.log" &&
-
-             "/bin/duplicati-commandline" delete-all-but-n 5 "file:///foo/backup"
-             --force
              2>&1 1>> "/zzz/output.log"]
     end
 

@@ -73,12 +73,12 @@ describe Duplicati do
   end
 
   context "#backup" do
-    it "executes the backup command" do
+    it "executes the backup command and returns self" do
       Duplicati::Backup.any_instance.should_receive(:command).and_return("backup command")
       duplicati = Duplicati.new(:backup_paths => [], :backup_store_path => "")
       duplicati.should_receive(:execute).with("backup command")
 
-      duplicati.backup
+      duplicati.backup.should == duplicati
     end
 
     it "proxies options to backup command" do
@@ -102,11 +102,14 @@ describe Duplicati do
   end
 
   context ".backup" do
-    it "is a convenience method for .new#backup" do
+    it "is a convenience method for .new#backup#clean#notify" do
       Duplicati::Backup.any_instance.should_receive(:command).and_return("backup command")
       Duplicati.any_instance.should_receive(:execute).with("backup command")
+      Duplicati::Clean.any_instance.should_receive(:command).and_return("clean command")
+      Duplicati.any_instance.should_receive(:execute).with("clean command")
+      Duplicati.any_instance.should_receive(:notify)
 
-      Duplicati.backup(:backup_paths => [], :backup_store_path => "")
+      Duplicati.backup(:backup_paths => [], :backup_store_path => "", :notifications => [])
     end
   end
 
@@ -130,7 +133,7 @@ describe Duplicati do
         $?.should_receive(:exitstatus).and_return -1
 
         duplicati = Duplicati.new
-        duplicati.send(:execute, "").should be_false
+        duplicati.send(:execute, "")
         duplicati.should_not be_execution_success
       end
 
@@ -139,7 +142,20 @@ describe Duplicati do
         $?.should_receive(:exitstatus).and_return 3
 
         duplicati = Duplicati.new
-        duplicati.send(:execute, "").should be_false
+        duplicati.send(:execute, "")
+        duplicati.should_not be_execution_success
+      end
+
+      it "is false when one of the commands fail with invalid exit status" do
+        duplicati = Duplicati.new
+        
+        Object.any_instance.should_receive(:system).twice.and_return true
+        $?.should_receive(:exitstatus).and_return 0
+        duplicati.send(:execute, "")
+        duplicati.should be_execution_success
+
+        $?.should_receive(:exitstatus).and_return 3
+        duplicati.send(:execute, "")
         duplicati.should_not be_execution_success
       end
 
@@ -148,7 +164,7 @@ describe Duplicati do
         $?.should_receive(:exitstatus).and_return 0
 
         duplicati = Duplicati.new
-        duplicati.send(:execute, "").should be_true
+        duplicati.send(:execute, "")
         duplicati.should be_execution_success
       end
 
@@ -157,7 +173,7 @@ describe Duplicati do
         $?.should_receive(:exitstatus).and_return 1
 
         duplicati = Duplicati.new
-        duplicati.send(:execute, "").should be_true
+        duplicati.send(:execute, "")
         duplicati.should be_execution_success
       end
 
@@ -166,7 +182,19 @@ describe Duplicati do
         $?.should_receive(:exitstatus).and_return 2
 
         duplicati = Duplicati.new
-        duplicati.send(:execute, "").should be_true
+        duplicati.send(:execute, "")
+        duplicati.should be_execution_success
+      end
+
+      it "is true when all of the commands succeed with success exit status" do
+        duplicati = Duplicati.new
+        
+        Object.any_instance.should_receive(:system).twice.and_return true
+        $?.should_receive(:exitstatus).twice.and_return 0
+        duplicati.send(:execute, "")
+        duplicati.should be_execution_success
+
+        duplicati.send(:execute, "")
         duplicati.should be_execution_success
       end
     end
@@ -176,26 +204,31 @@ describe Duplicati do
         Duplicati.any_instance.unstub(:notify)
       end
 
+      it "returns self" do
+        duplicati = Duplicati.new
+        duplicati.notify.should == duplicati
+      end
+
       it "notifies with all possible notifications with false execution success" do
-        Object.any_instance.stub(:system).and_return false
-        $?.should_receive(:exitstatus).and_return 3
         notification1 = double('notification1').as_null_object
         notification2 = double('notification2').as_null_object
-        
         notification1.should_receive(:notify).with(false)
         notification2.should_receive(:notify).with(false)
-        Duplicati.new(:notifications => [notification1, notification2]).send(:execute, "")
+
+        duplicati = Duplicati.new(:notifications => [notification1, notification2])
+        duplicati.should_receive(:execution_success?).twice.and_return(false)
+        duplicati.notify
       end
 
       it "notifies with all possible notifications with true execution success" do
-        Object.any_instance.stub(:system).and_return true
-        $?.should_receive(:exitstatus).and_return 0
         notification1 = double('notification1').as_null_object
         notification2 = double('notification2').as_null_object
-        
         notification1.should_receive(:notify).with(true)
         notification2.should_receive(:notify).with(true)
-        Duplicati.new(:notifications => [notification1, notification2]).send(:execute, "")
+
+        duplicati = Duplicati.new(:notifications => [notification1, notification2])
+        duplicati.should_receive(:execution_success?).twice.and_return(true)
+        duplicati.notify
       end
     end
 

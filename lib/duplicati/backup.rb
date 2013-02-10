@@ -21,10 +21,6 @@ class Duplicati
              --usn-policy=auto
              --snapshot-policy=auto
              --full-if-sourcefolder-changed
-             2>&1 1>> "#{@log_path}" &&
-
-             "#{@duplicati_path}" delete-all-but-n 5 "#{@backup_store_path}"
-             --force
              2>&1 1>> "#{@log_path}"]
     end
 
