@@ -20,7 +20,8 @@ describe Duplicati::Clean do
       ).command.should == %Q["/bin/duplicati-commandline" delete-all-but-n 5 "file:///foo/backup"
              
              --force
-             2>&1 1>> "/zzz/output.log"]
+             1>>"/zzz/output.log"
+             2>&1]
     end
 
     it "generates clean command for Duplicati using backup encryption" do
@@ -32,7 +33,8 @@ describe Duplicati::Clean do
       ).command.should == %Q["/bin/duplicati-commandline" delete-all-but-n 5 "file:///foo/backup"
              --passphrase="foobar"
              --force
-             2>&1 1>> "/zzz/output.log"]
+             1>>"/zzz/output.log"
+             2>&1]
     end
 
   end

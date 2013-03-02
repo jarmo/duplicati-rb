@@ -40,7 +40,8 @@ describe Duplicati::Backup do
              --usn-policy=auto
              --snapshot-policy=auto
              --full-if-sourcefolder-changed
-             2>&1 1>> "/zzz/output.log"]
+             1>>"/zzz/output.log"
+             2>&1]
     end
 
     it "generates backup command for Duplicati without using any encryption when encryption key is not provided" do

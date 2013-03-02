@@ -21,7 +21,8 @@ class Duplicati
              --usn-policy=auto
              --snapshot-policy=auto
              --full-if-sourcefolder-changed
-             2>&1 1>> "#{@log_path}"]
+             1>>"#{@log_path}"
+             2>&1]
     end
 
     private
