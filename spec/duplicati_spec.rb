@@ -1,6 +1,10 @@
 require "spec_helper"
 
 describe Duplicati do
+  before do
+    allow_message_expectations_on_nil
+  end
+
   context "#initialize" do
 
     it "has specified default log path" do
@@ -61,7 +65,7 @@ describe Duplicati do
     it "has no exclusion filters by default" do
       Duplicati.new.opts[:exclusion_filters].should == []
     end
-    
+
     it "allows to specify a single exclusion filter" do
       Duplicati.new(:exclusion_filter => /aa/).opts[:exclusion_filters].should == [/aa/]
     end
@@ -122,6 +126,7 @@ describe Duplicati do
     it "executes the command" do
       cmd = "multiline
         command     with  spaces"
+      $?.should_receive(:exitstatus).and_return 0
       Object.any_instance.should_receive(:system).with("multiline command with spaces")
 
       Duplicati.new.send(:execute, cmd)
@@ -148,7 +153,7 @@ describe Duplicati do
 
       it "is false when one of the commands fail with invalid exit status" do
         duplicati = Duplicati.new
-        
+
         Object.any_instance.should_receive(:system).twice.and_return true
         $?.should_receive(:exitstatus).and_return 0
         duplicati.send(:execute, "")
@@ -188,7 +193,7 @@ describe Duplicati do
 
       it "is true when all of the commands succeed with success exit status" do
         duplicati = Duplicati.new
-        
+
         Object.any_instance.should_receive(:system).twice.and_return true
         $?.should_receive(:exitstatus).twice.and_return 0
         duplicati.send(:execute, "")
