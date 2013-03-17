@@ -6,7 +6,7 @@ describe Duplicati::Clean do
     it "raises an Exception if backup store path is not provided" do
       expect {
         Duplicati::Clean.new(:backup_paths => [])
-      }.to raise_error(RuntimeError, ":backup_store_path option is missing for clean!")
+      }.to raise_error(RuntimeError, ":backup_store_path option is missing!")
     end
   end
 
@@ -18,7 +18,7 @@ describe Duplicati::Clean do
         :backup_store_path => "file:///foo/backup",
         :log_path => "/zzz/output.log"
       ).command.should == %Q["/bin/duplicati-commandline" delete-all-but-n 5 "file:///foo/backup"
-             
+             --no-encryption
              --force
              1>>"/zzz/output.log"
              2>&1]

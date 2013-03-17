@@ -1,4 +1,5 @@
 require File.expand_path("duplicati/version", File.dirname(__FILE__))
+require File.expand_path("duplicati/command", File.dirname(__FILE__))
 require File.expand_path("duplicati/backup", File.dirname(__FILE__))
 require File.expand_path("duplicati/clean", File.dirname(__FILE__))
 require File.expand_path("duplicati/notification/base", File.dirname(__FILE__))

@@ -1,13 +1,10 @@
 class Duplicati
-  class Backup
+  class Backup < Command
     def initialize(opts)
-      @duplicati_path = opts[:duplicati_path]
+      super
       @backup_paths = opts[:backup_paths] or raise ":backup_paths option is missing for backup!"
-      @backup_store_path = opts[:backup_store_path] or raise ":backup_store_path option is missing for backup!"
-      @backup_encryption_key = opts[:backup_encryption_key]
       @inclusion_filters = opts[:inclusion_filters] || []
       @exclusion_filters = opts[:exclusion_filters] || []
-      @log_path = opts[:log_path]
     end
 
     def command
@@ -26,12 +23,6 @@ class Duplicati
     end
 
     private
-
-    def encryption_option
-      @backup_encryption_key ? 
-        %Q[--passphrase="#{@backup_encryption_key}"] :
-        %Q[--no-encryption]
-    end
 
     def backup_paths
       @backup_paths.map do |path|

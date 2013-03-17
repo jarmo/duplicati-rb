@@ -13,7 +13,7 @@ describe Duplicati::Backup do
     it "raises an Exception if backup store path is not provided" do
       expect {
         Duplicati::Backup.new(:backup_paths => [])
-      }.to raise_error(RuntimeError, ":backup_store_path option is missing for backup!")
+      }.to raise_error(RuntimeError, ":backup_store_path option is missing!")
     end
   end
 
