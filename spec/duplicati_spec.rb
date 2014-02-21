@@ -16,7 +16,8 @@ describe Duplicati do
     end
 
     it "has default duplicati path" do
-      File.basename(Duplicati.new.opts[:duplicati_path]).should == "Duplicati.CommandLine"
+      duplicati = Duplicati.new
+      File.basename(duplicati.opts[:duplicati_path]).should == duplicati.send(:duplicati_executable_name)
     end
 
     it "allows to specify duplicati path via options" do

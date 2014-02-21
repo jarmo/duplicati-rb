@@ -70,7 +70,15 @@ class Duplicati
   private
 
   def duplicati_path(path_from_options)
-    path_from_options || ENV["DUPLICATI_PATH"] || (ENV["OS"] == "Windows_NT" ? "/Program Files/Duplicati/Duplicati.CommandLine" : "duplicati-commandline")
+    path_from_options || ENV["DUPLICATI_PATH"] || (windows? ? "/Program Files/Duplicati/#{duplicati_executable_name}" : duplicati_executable_name)
+  end
+  
+  def duplicati_executable_name
+    windows? ? "Duplicati.CommandLine" : "duplicati-commandline"
+  end
+
+  def windows?
+    ENV["OS"] == "Windows_NT"
   end
 
   def execute(command)
