@@ -16,17 +16,17 @@ describe Duplicati do
     end
 
     it "has default duplicati path" do
-      Duplicati.new.opts[:duplicati_path].should == "/Program Files/Duplicati/Duplicati.CommandLine"
+      File.basename(Duplicati.new.opts[:duplicati_path]).should == "Duplicati.CommandLine"
     end
 
     it "allows to specify duplicati path via options" do
-      Duplicati.new(:duplicati_path => "/zzz/baz").opts[:duplicati_path].should == "/zzz/baz/Duplicati.CommandLine"
+      Duplicati.new(:duplicati_path => "/zzz/baz/duplicati-commandline").opts[:duplicati_path].should == "/zzz/baz/duplicati-commandline"
     end
 
     it "allows to specify duplicati path via environment variable" do
       begin
-        ENV["DUPLICATI_PATH"] = "/env/path"
-        Duplicati.new.opts[:duplicati_path].should == "/env/path/Duplicati.CommandLine"
+        ENV["DUPLICATI_PATH"] = "/env/path/duplicati-commandline"
+        Duplicati.new.opts[:duplicati_path].should == "/env/path/duplicati-commandline"
       ensure
         ENV.delete "DUPLICATI_PATH"
       end
@@ -86,7 +86,7 @@ describe Duplicati do
     end
 
     it "proxies options to backup command" do
-      duplicati_path = "/foo/bar"
+      duplicati_path = "/foo/bar/duplicati-commandline"
       options = {
         :duplicati_path => duplicati_path,
         :backup_paths => ["foo", "bar"],
@@ -96,9 +96,8 @@ describe Duplicati do
         :exclusion_filters => [],
         :log_path => "tmp"
       }
-      expected_formatted_options = options.dup
-      expected_formatted_options[:duplicati_path] += "/Duplicati.CommandLine"
-      Duplicati::Backup.should_receive(:new).with(expected_formatted_options).and_return(double('backup').as_null_object)
+      expected_options = options.dup
+      Duplicati::Backup.should_receive(:new).with(expected_options).and_return(double('backup').as_null_object)
       Duplicati.any_instance.stub(:execute)
 
       Duplicati.new(options).backup

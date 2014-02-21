@@ -70,8 +70,7 @@ class Duplicati
   private
 
   def duplicati_path(path_from_options)
-    path = path_from_options || ENV["DUPLICATI_PATH"] || "/Program Files/Duplicati"
-    File.join(path, "Duplicati.CommandLine")
+    path_from_options || ENV["DUPLICATI_PATH"] || (ENV["OS"] == "Windows_NT" ? "/Program Files/Duplicati/Duplicati.CommandLine" : "duplicati-commandline")
   end
 
   def execute(command)
