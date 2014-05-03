@@ -6,6 +6,7 @@ class Duplicati
       def initialize(opts={})
         @smtp_config = {:port => 25, :openssl_verify_mode => "none"}.merge(opts[:smtp_config] || {})
         @to = opts[:to]
+        @subject_prefix = opts[:subject_prefix] || `hostname`.strip
       end
 
       def notify(success)
@@ -13,13 +14,14 @@ class Duplicati
 
         smtp_config = @smtp_config
         to_address = @to
+        subject_prefix = @subject_prefix
 
         ::Mail.deliver do
           delivery_method :smtp, smtp_config
 
           to to_address
           from "backup@duplicati.com"
-          subject "#{`hostname`.strip} - Backup #{success ? "Succeeded" : "Failed"}!"
+          subject "#{subject_prefix} - Backup #{success ? "Succeeded" : "Failed"}!"
           body "#{Time.now} - backup #{success ? "succeeded" : "failed"}!"
         end
       rescue => e
