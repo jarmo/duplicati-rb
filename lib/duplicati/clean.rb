@@ -1,7 +1,7 @@
 class Duplicati
   class Clean < Command
     def command
-      %Q["#{@duplicati_path}" delete-all-but-n 2 "#{@backup_store_path}"
+      %Q["#{@duplicati_path}" delete-all-but-n 1 "#{@backup_store_path}"
              #{encryption_option}
              --force
              1>>"#{@log_path}"
