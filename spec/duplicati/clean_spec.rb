@@ -17,7 +17,7 @@ describe Duplicati::Clean do
         :duplicati_path => "/bin/duplicati-commandline",
         :backup_store_path => "file:///foo/backup",
         :log_path => "/zzz/output.log"
-      ).command.should == %Q["/bin/duplicati-commandline" delete-all-but-n 2 "file:///foo/backup"
+      ).command.should == %Q["/bin/duplicati-commandline" delete-all-but-n 1 "file:///foo/backup"
              --no-encryption
              --force
              1>>"/zzz/output.log"
@@ -30,7 +30,7 @@ describe Duplicati::Clean do
         :backup_store_path => "file:///foo/backup",
         :backup_encryption_key => "foobar",
         :log_path => "/zzz/output.log"
-      ).command.should == %Q["/bin/duplicati-commandline" delete-all-but-n 2 "file:///foo/backup"
+      ).command.should == %Q["/bin/duplicati-commandline" delete-all-but-n 1 "file:///foo/backup"
              --passphrase="foobar"
              --force
              1>>"/zzz/output.log"
