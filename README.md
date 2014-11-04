@@ -1,4 +1,4 @@
-# [DEPRECATED]
+# **DEPRECATED**
 using this gem is no longer needed since Duplicati GUI allows for command line export from the GUI itself.
 
 # Duplicati
