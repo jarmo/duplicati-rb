@@ -1,3 +1,6 @@
+# [DEPRECATED]
+using this gem is no longer needed since Duplicati GUI allows for command line export from the GUI itself.
+
 # Duplicati
 [![Gem Version](https://badge.fury.io/rb/duplicati.png)](http://badge.fury.io/rb/duplicati)
 [![Build Status](https://secure.travis-ci.org/jarmo/duplicati-rb.png)](http://travis-ci.org/jarmo/duplicati-rb)
